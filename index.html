@@ -261,19 +261,41 @@ footer a:hover{color:var(--gold)}
   .stat:nth-child(4),.stat:nth-child(5){border-top:1px solid var(--border)}
   .inv-grid,.loc-grid,.con-grid{grid-template-columns:1fr}
   .feat-grid{grid-template-columns:repeat(2,1fr)}
-  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  /* Gallery: 2-col with all cells auto-height via aspect-ratio */
+  .gallery-grid{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto;
+  }
   .gi-exterior{grid-column:1/-1;grid-row:auto;height:260px}
-  .gi-bedroom{grid-column:1/-1;grid-row:auto}
-  .gi-hall,.gi-wardrobe,.gi-bedroom{height:220px}
+  .gi-hall{grid-column:1/2;grid-row:auto;height:220px}
+  .gi-wardrobe{grid-column:2/3;grid-row:auto;height:220px}
+  .gi-bedroom{grid-column:1/-1;grid-row:auto;height:240px}
+  /* Bathroom grid tablet */
+  .gallery-grid-2{grid-template-columns:1fr 1fr}
+  .gi2{height:220px}
 }
 @media(max-width:600px){
   .stats-inner{grid-template-columns:repeat(2,1fr)}
   .feat-grid{grid-template-columns:1fr}
   .fr{grid-template-columns:1fr}
   .calc-result{grid-template-columns:1fr}
-  .gallery-grid{grid-template-rows:auto}
-  .gi{height:200px}
+  /* Gallery: single column stack on phones */
+  .gallery-grid{
+    grid-template-columns:1fr;
+    grid-template-rows:auto;
+  }
+  .gi-exterior,
+  .gi-hall,
+  .gi-wardrobe,
+  .gi-bedroom{
+    grid-column:1/-1;
+    grid-row:auto;
+    height:220px;
+  }
   .gi-exterior{height:240px}
+  /* Bathroom grid phone: stack vertically */
+  .gallery-grid-2{grid-template-columns:1fr}
+  .gi2{height:220px}
 }
 
 /* DEVELOPER SECTION */
