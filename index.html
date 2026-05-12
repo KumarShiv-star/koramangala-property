@@ -17,6 +17,7 @@
 <meta property="twitter:image" content="https://kumarshiv-star.github.io/koramangala-property/outside_view.png">
 <meta name="description" content="Premium independent house for sale in 4th Block Koramangala, Bangalore. 1103 sqft plot, 1700 sqft built-up, ₹1 lakh/month rental income, E-Khata approved, 2-min walk Chinmaya Vidyalaya. ₹5.5 Crore.">
 
+<script src="https://www.google.com/recaptcha/api.js?render=6LcgCuYsAAAAAF2i2RVe1GHKD3deM_7pHyqSklpi"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -471,8 +472,17 @@ footer a:hover{color:var(--gold)}
 <section class="vid-section" id="video">
   <div class="si">
     <div class="sec-tag rev">Video walkthrough</div>
-    <h2 class="rev">See every <em>room</em>.</h2>
-    <p class="sec-desc rev">A complete tour — layout, flow, finish quality. No surprises on your site visit.</p>
+    <h2 class="rev">See the <em>property &amp; neighbourhood</em>.</h2>
+    <p class="sec-desc rev">Two walkthroughs — the neighbourhood feel and every room inside. No surprises on your site visit.</p>
+    <div class="vid-wrap rev" style="margin-bottom:2rem">
+      <iframe
+        src="https://www.youtube.com/embed/2SBlooea4KI?rel=0&modestbranding=1"
+        title="Neighbourhood walkthrough — 4th Block Koramangala"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
     <div class="vid-wrap rev">
       <iframe
         src="https://www.youtube.com/embed/3VvBZqvpg8Q?rel=0&modestbranding=1"
@@ -646,7 +656,10 @@ footer a:hover{color:var(--gold)}
           </div>
           <div class="fg"><label>Message</label><textarea name="message" placeholder="Questions? When are you free for a site visit?"></textarea></div>
           <input type="hidden" name="_subject" value="New enquiry — Koramangala 4th Block Property">
-          <button type="submit" class="fsub">Send Enquiry →</button>
+          <!-- Honeypot: bots fill this, humans don't see it -->
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="hidden" id="gRecaptchaToken" name="g-recaptcha-response">
+          <button type="submit" class="fsub" id="fSubmitBtn">Send Enquiry →</button>
           <div class="f-ok" id="fOk">✓ Received! The owner will contact you within 24 hours.</div>
         </form>
       </div>
@@ -727,17 +740,81 @@ calcROI();
 let v=47;
 setInterval(()=>{if(Math.random()<.3){v++;const e=document.getElementById('vc');if(e)e.textContent=v;}},9000);
 
-// Form
+// Form — reCAPTCHA v3 + honeypot + session cap + cooldown
+const RECAPTCHA_SITE_KEY='6LcgCuYsAAAAAF2i2RVe1GHKD3deM_7pHyqSklpi';
+const MAX_SUBMISSIONS=3;
+const COOLDOWN_SECS=60;
 const form=document.getElementById('eForm');
+const btn=document.getElementById('fSubmitBtn');
+let submissions=parseInt(sessionStorage.getItem('enq_count')||'0');
+let cooldownTimer=null;
+
+function startCooldown(){
+  let secs=COOLDOWN_SECS;
+  btn.disabled=true;
+  cooldownTimer=setInterval(()=>{
+    secs--;
+    btn.textContent=`Please wait ${secs}s…`;
+    if(secs<=0){
+      clearInterval(cooldownTimer);
+      if(submissions<MAX_SUBMISSIONS){
+        btn.textContent='Send Enquiry →';
+        btn.disabled=false;
+      } else {
+        btn.textContent='Enquiry limit reached';
+      }
+    }
+  },1000);
+}
+
+// Disable button if session limit already hit on page load
+if(submissions>=MAX_SUBMISSIONS){
+  btn.textContent='Enquiry limit reached';
+  btn.disabled=true;
+}
+
 form.addEventListener('submit',async e=>{
   e.preventDefault();
-  const btn=form.querySelector('.fsub');
-  btn.textContent='Sending…';btn.disabled=true;
+
+  // Honeypot check
+  if(form._honey&&form._honey.value){return;}
+
+  // Session cap
+  if(submissions>=MAX_SUBMISSIONS){
+    btn.textContent='Enquiry limit reached';
+    btn.disabled=true;
+    return;
+  }
+
+  btn.textContent='Verifying…';
+  btn.disabled=true;
+
   try{
+    // Get reCAPTCHA v3 token
+    const token=await grecaptcha.execute(RECAPTCHA_SITE_KEY,{action:'enquiry'});
+    document.getElementById('gRecaptchaToken').value=token;
+
+    btn.textContent='Sending…';
     const r=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}});
-    if(r.ok){form.style.display='none';document.getElementById('fOk').style.display='block';}
-    else{btn.textContent='Try again';btn.disabled=false;}
-  }catch{btn.textContent='Try again';btn.disabled=false;}
+    if(r.ok){
+      submissions++;
+      sessionStorage.setItem('enq_count',submissions);
+      form.style.display='none';
+      document.getElementById('fOk').style.display='block';
+    } else {
+      btn.textContent='Try again';
+      btn.disabled=false;
+    }
+  } catch{
+    btn.textContent='Try again';
+    btn.disabled=false;
+    return;
+  }
+
+  // Start cooldown for next attempt
+  if(submissions<MAX_SUBMISSIONS){
+    startCooldown();
+  }
 });
 
 // Copy link
