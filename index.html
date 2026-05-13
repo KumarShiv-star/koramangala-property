@@ -713,6 +713,10 @@ footer a:hover{color:var(--gold)}
           <!-- Honeypot: bots fill this, humans don't see it -->
           <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
           <input type="hidden" id="gRecaptchaToken" name="g-recaptcha-response">
+          <div class="fg" style="flex-direction:row;align-items:flex-start;gap:.75rem;margin-bottom:.5rem">
+            <input type="checkbox" id="privacyConsent" name="privacy_consent" required style="margin-top:3px;accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;cursor:pointer">
+            <label for="privacyConsent" style="font-size:.78rem;color:var(--muted);line-height:1.5;cursor:pointer">I consent to the collection and use of my personal data (name, phone, email) solely for the purpose of this property enquiry, as described in the <a href="privacy-policy.html" target="_blank" style="color:var(--gold);text-decoration:underline">Privacy Policy</a>. I understand I can withdraw consent at any time.</label>
+          </div>
           <button type="submit" class="fsub" id="fSubmitBtn">Send Enquiry →</button>
           <div class="f-ok" id="fOk">✓ Received! The owner will contact you within 24 hours.</div>
         </form>
@@ -736,7 +740,8 @@ footer a:hover{color:var(--gold)}
 <footer>
   <div>4th Block, Koramangala, Bangalore · Independent house for sale · ₹5.5 Crore · White money only · No brokerage</div>
   <div style="margin-top:.4rem"><a href="#gallery">Gallery</a> · <a href="#investment">ROI Calculator</a> · <a href="#location">Location</a> · <a href="#contact">Enquire</a></div>
-  <div style="margin-top:.6rem;font-size:.65rem;color:var(--faint)">© 2026 · Direct from owner · Koramangala 4th Block, Bangalore 560034</div>
+  <div style="margin-top:.5rem"><a href="privacy-policy.html" style="font-size:.65rem;color:var(--faint);text-decoration:underline">Privacy Policy</a></div>
+  <div style="margin-top:.4rem;font-size:.65rem;color:var(--faint)">© 2026 · Direct from owner · Koramangala 4th Block, Bangalore 560034</div>
 </footer>
 
 <script>
